@@ -1,3 +1,16 @@
-up db 
- - migrate -database 'mysql://root:Root1234!@tcp(localhost:3306)/go_todo' -path database/migrations up
-- 20231115062639_create_table.up.sql
+Tutorial : 
+- create database MYSQL
+- Eksekusi file-file *.sql dalam folder database/migrations/*.sql ke database MySQL
+- Siapkan environment variable dibawah ini:
+- MYSQL_DBNAME
+- MYSQL_HOST
+- MYSQL_USER
+- MYSQL_PASSWORD
+- MYSQL_PORT
+- SERVER_PORT
+- SERVER_HOST
+- API_KEY
+- LOG_LEVEL
+
+Setelah itu
+- Jalankan : go run .
