@@ -1,6 +1,5 @@
 Tutorial : 
 - create database MYSQL
-- Eksekusi file-file *.sql dalam folder database/migrations/*.sql ke database MySQL
 - Siapkan environment variable dibawah ini:
 - MYSQL_DBNAME
 - MYSQL_HOST
@@ -11,6 +10,7 @@ Tutorial :
 - SERVER_HOST
 - API_KEY
 - LOG_LEVEL
+- Jalankan : migrate -database 'mysql://USER:PASSWORD@tcp(HOST:PORT)/DBNAME' -path database/migrations up
 
 Setelah itu
 - Jalankan : go run .
