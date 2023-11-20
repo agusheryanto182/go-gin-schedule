@@ -10,7 +10,7 @@ Tutorial :
 - SERVER_HOST
 - API_KEY
 - LOG_LEVEL
-- Jalankan : migrate -database 'mysql://USER:PASSWORD@tcp(HOST:PORT)/DBNAME' -path database/migrations up
+- Jalankan : migrate -database 'mysql://MYSQL_USER:MYSQL_PASSWORD@tcp(MYSQL_HOST:MYSQL_PORT)/MYSQL_DBNAME' -path database/migrations up
 
 Setelah itu
 - Jalankan : go run .
