@@ -3,7 +3,7 @@ package log
 import (
 	"time"
 )
-
+//
 type HTTP struct {
 	ReceivedTime  time.Time
 	RequestMethod string

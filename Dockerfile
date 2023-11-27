@@ -1,7 +1,7 @@
 # Gunakan image base yang sesuai dengan aplikasi Anda
 FROM golang:1.21.4-alpine AS builder
 
-# Set a default value ENV
+# Set default value ENV
 ENV API_KEY="x-api-key"
 
 ENV SERVER_HOST="localhost"
