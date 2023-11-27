@@ -19,15 +19,24 @@ type ScheduleControllerImpl struct {
 func (self *ScheduleControllerImpl) AddSchedule(c *gin.Context) {
 	var input web.ScheduleCreateRequest
 
-	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		errors := helpers.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
+	email := c.Query("email")
 
-		response := helpers.APIResponse("Bad Request", "title or activity_group_id cannot be null", errorMessage)
+	findByEmail, _ := self.UserService.FindByEmail(email)
+
+	_ = c.ShouldBindJSON(&input)
+	if input.Title == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Title is empty")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	if input.Day == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Day is empty")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	input.UserId = findByEmail.UserId
 
 	result, err := self.ScheduleService.Create(input)
 	if err != nil {
@@ -44,36 +53,28 @@ func (self *ScheduleControllerImpl) AddSchedule(c *gin.Context) {
 func (self *ScheduleControllerImpl) Edit(c *gin.Context) {
 	var input web.ScheduleUpdateRequest
 
-	currentUser := c.MustGet("currentUser").(domain.User)
+	_ = c.ShouldBindJSON(&input)
 
 	email := c.Query("email")
 	id, _ := strconv.Atoi(c.Query("id"))
 
-	checkSchedule, err := self.ScheduleService.FindById(id)
-	if err != nil {
-		response := helpers.APIResponse("Something error", "Bad Request", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	checkEmail, _ := self.UserService.FindByEmail(email)
+
+	checkSchedule, _ := self.ScheduleService.FindById(id)
 
 	if checkSchedule.ScheduleId == 0 {
-		response := helpers.APIResponse("No schedule on that ID", "Bad Request", nil)
-		c.JSON(http.StatusBadRequest, response)
+		response := helpers.APIResponseFailed("Not Found", "Schedule with ID "+strconv.Itoa(id)+" Not Found")
+		c.JSON(http.StatusNotFound, response)
 		return
 	}
 
-	if currentUser.Email != email {
-		response := helpers.APIResponse("Forbiden", "Denied", nil)
-		c.JSON(http.StatusBadRequest, response)
+	if checkSchedule.UserId != checkEmail.UserId {
+		response := helpers.APIResponseFailed("Forbidden", "Access denied")
+		c.JSON(http.StatusForbidden, response)
 		return
 	}
 
-	updated, err := self.ScheduleService.Update(input)
-	if err != nil {
-		response := helpers.APIResponse("Something error", "Bad Request", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	updated, _ := self.ScheduleService.Update(input)
 
 	response := helpers.APIResponse("Success", "Success", updated)
 

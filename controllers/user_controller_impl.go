@@ -17,8 +17,13 @@ func (self *UserControllerImpl) CheckIn(c *gin.Context) {
 	var input web.UserCreateRequest
 
 	err := c.ShouldBindJSON(&input)
+	if input.Email == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Email is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 	if err != nil {
-		response := helpers.APIResponseFailed("Bad Request", "Bad request")
+		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}

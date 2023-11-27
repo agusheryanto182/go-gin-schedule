@@ -1,5 +1,4 @@
-Tutorial : 
-
+Cara menjalankan :
 - create database MYSQL
 - Siapkan environment variable dibawah ini:
 - MYSQL_DBNAME

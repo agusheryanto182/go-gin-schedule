@@ -26,6 +26,15 @@ func (self *UserRepositoryImpl) FindById(userId int) (domain.User, error) {
 	return user, nil
 }
 
+func (self *UserRepositoryImpl) FindByEmail(email string) (domain.User, error) {
+	var user domain.User
+	err := self.db.Where("email = ?", email).Find(&user).Error
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func NewUserRepository(db *gorm.DB) UserRepository {
 	return &UserRepositoryImpl{db: db}
 }

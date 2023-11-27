@@ -44,6 +44,20 @@ func (self *UserServiceImpl) FindById(userId int) (web.UserResponse, error) {
 
 }
 
+func (self *UserServiceImpl) FindByEmail(email string) (web.UserResponse, error) {
+	user, err := self.UserRepository.FindByEmail(email)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+
+	if user.UserId == 0 {
+		return web.UserResponse{}, err
+	}
+
+	return helpers.ToUserResponse(user), nil
+
+}
+
 func NewUserService(UserRepository repositories.UserRepository, Validate *validator.Validate) UserService {
 	return &UserServiceImpl{UserRepository: UserRepository, Validate: Validate}
 }

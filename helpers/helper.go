@@ -5,29 +5,29 @@ import (
 )
 
 type Response struct {
-	Message string      `json:"message"`
 	Status  string      `json:"status"`
+	Message any         `json:"message"`
 	Data    interface{} `json:"data"`
 }
 
 type ResponseFailed struct {
-	Message string `json:"message"`
 	Status  string `json:"status"`
+	Message any    `json:"message"`
 }
 
-func APIResponse(message string, status string, data interface{}) Response {
+func APIResponse(status string, message any, data interface{}) Response {
 	jsonResponse := Response{
-		Message: message,
 		Status:  status,
+		Message: message,
 		Data:    data,
 	}
 	return jsonResponse
 }
 
-func APIResponseFailed(message string, status string) ResponseFailed {
+func APIResponseFailed(status string, message any) ResponseFailed {
 	jsonResponse := ResponseFailed{
-		Message: message,
 		Status:  status,
+		Message: message,
 	}
 	return jsonResponse
 }

@@ -14,7 +14,7 @@ func NewRouter(userController controllers.UserController, scheduleController con
 	schedule.GET("", scheduleController.GetAll)
 	schedule.POST("/:id", scheduleController.GetById)
 	schedule.POST("", scheduleController.AddSchedule)
-	schedule.PATCH("/:id", scheduleController.Edit)
+	schedule.PATCH("", scheduleController.Edit)
 	schedule.DELETE("/:id", scheduleController.Delete)
 
 	return router
