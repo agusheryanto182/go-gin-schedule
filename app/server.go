@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/agusheryanto182/go-todo/models/config"
+	"github.com/agusheryanto182/go-schedule/models/config"
 )
 
 func NewServer(middleware http.Handler, c *config.Global) *http.Server {

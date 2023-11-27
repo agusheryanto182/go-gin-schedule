@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/agusheryanto182/go-todo/log"
+	"github.com/agusheryanto182/go-schedule/log"
 	"github.com/rs/zerolog"
 )
 

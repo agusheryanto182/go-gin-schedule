@@ -3,7 +3,7 @@ package app
 import (
 	"log"
 
-	"github.com/agusheryanto182/go-todo/models/config"
+	"github.com/agusheryanto182/go-schedule/models/config"
 	"github.com/joeshaw/envdecode"
 )
 

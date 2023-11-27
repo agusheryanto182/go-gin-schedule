@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/agusheryanto182/go-todo/app"
-	"github.com/agusheryanto182/go-todo/controllers"
-	"github.com/agusheryanto182/go-todo/middlewares"
-	"github.com/agusheryanto182/go-todo/repositories"
-	"github.com/agusheryanto182/go-todo/services"
-	"github.com/agusheryanto182/go-todo/utils/log"
+	"github.com/agusheryanto182/go-schedule/app"
+	"github.com/agusheryanto182/go-schedule/controllers"
+	"github.com/agusheryanto182/go-schedule/middlewares"
+	"github.com/agusheryanto182/go-schedule/repositories"
+	"github.com/agusheryanto182/go-schedule/services"
+	"github.com/agusheryanto182/go-schedule/utils/log"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -18,15 +18,15 @@ func InitServer() *http.Server {
 	db := app.NewDB(conf)
 	validate := validator.New()
 
-	todoRepository := repositories.NewTodoRepository(db)
-	todoService := services.NewTodoService(todoRepository, validate)
-	todoController := controllers.NewTodoController(todoService)
+	UserRepository := repositories.NewUserRepository(db)
+	UserService := services.NewUserService(UserRepository, validate)
+	userController := controllers.NewUserController(UserService)
 
-	activityRepository := repositories.NewActivityRepository(db)
-	activityService := services.NewActivityService(activityRepository, validate)
-	activityController := controllers.NewActivityController(activityService)
+	scheduleRepository := repositories.NewScheduleRepository(db)
+	scheduleService := services.NewScheduleService(scheduleRepository, validate)
+	scheduleController := controllers.NewScheduleController(scheduleService, UserService)
 
-	r := app.NewRouter(activityController, todoController)
+	r := app.NewRouter(userController, scheduleController)
 	err := r.Run()
 	if err != nil {
 		fmt.Println("Error on the route run")

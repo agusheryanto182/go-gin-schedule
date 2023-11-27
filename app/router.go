@@ -1,32 +1,21 @@
 package app
 
 import (
-	"github.com/agusheryanto182/go-todo/controllers"
+	"github.com/agusheryanto182/go-schedule/controllers"
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(activityController controllers.ActivityController, todoController controllers.TodoController) *gin.Engine {
+func NewRouter(userController controllers.UserController, scheduleController controllers.ScheduleController) *gin.Engine {
 	router := gin.Default()
 
-	todoRoute := router.Group("/todo-items")
-	{
-		todoRoute.POST("/", todoController.Create)
-		todoRoute.GET("/:todoId", todoController.FindById)
-		todoRoute.PATCH("/:todoId", todoController.Update)
-		todoRoute.DELETE("/:todoId", todoController.Delete)
-		todoRoute.GET("", todoController.FindAll)
+	router.POST("/checkin", userController.CheckIn)
 
-	}
-
-	activityRoute := router.Group("/activity-groups")
-	{
-		activityRoute.GET("/", activityController.FindAll)
-		activityRoute.POST("/", activityController.Create)
-		activityRoute.GET("/:activityId", activityController.FindById)
-		activityRoute.PATCH("/:activityId", activityController.Update)
-		activityRoute.DELETE("/:activityId", activityController.Delete)
-
-	}
+	schedule := router.Group("/schedule")
+	schedule.GET("", scheduleController.GetAll)
+	schedule.POST("/:id", scheduleController.GetById)
+	schedule.POST("", scheduleController.AddSchedule)
+	schedule.PATCH("/:id", scheduleController.Edit)
+	schedule.DELETE("/:id", scheduleController.Delete)
 
 	return router
 }

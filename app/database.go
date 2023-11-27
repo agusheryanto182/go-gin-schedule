@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/agusheryanto182/go-todo/models/config"
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/agusheryanto182/go-schedule/models/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

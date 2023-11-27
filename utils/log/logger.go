@@ -3,7 +3,7 @@ package log
 import (
 	"os"
 
-	"github.com/agusheryanto182/go-todo/models/config"
+	"github.com/agusheryanto182/go-schedule/models/config"
 	"github.com/rs/zerolog"
 )
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/agusheryanto182/go-todo/models/web"
+	"github.com/agusheryanto182/go-schedule/models/web"
 )
 
 func ReadFromRequestBody(req *http.Request, result interface{}) {

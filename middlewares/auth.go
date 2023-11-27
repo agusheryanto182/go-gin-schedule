@@ -3,8 +3,8 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/agusheryanto182/go-todo/helpers"
-	"github.com/agusheryanto182/go-todo/models/config"
+	"github.com/agusheryanto182/go-schedule/helpers"
+	"github.com/agusheryanto182/go-schedule/models/config"
 )
 
 type AuthMiddleware struct {

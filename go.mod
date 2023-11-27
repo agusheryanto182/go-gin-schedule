@@ -1,4 +1,4 @@
-module github.com/agusheryanto182/go-todo
+module github.com/agusheryanto182/go-schedule
 
 go 1.21.4
 
