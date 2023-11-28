@@ -11,11 +11,10 @@ func NewRouter(userController controllers.UserController, scheduleController con
 	router.POST("/checkin", userController.CheckIn)
 
 	schedule := router.Group("/schedule")
-	schedule.GET("", scheduleController.GetAll)
-	schedule.POST("/:id", scheduleController.GetById)
+	schedule.GET("", scheduleController.GetData)
 	schedule.POST("", scheduleController.AddSchedule)
 	schedule.PATCH("", scheduleController.Edit)
-	schedule.DELETE("/:id", scheduleController.Delete)
+	schedule.DELETE("", scheduleController.Delete)
 
 	return router
 }

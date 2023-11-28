@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/agusheryanto182/go-schedule/helpers"
-	"github.com/agusheryanto182/go-schedule/models/domain"
 	"github.com/agusheryanto182/go-schedule/models/web"
 	"github.com/agusheryanto182/go-schedule/services"
 	"github.com/gin-gonic/gin"
@@ -20,30 +19,41 @@ func (self *ScheduleControllerImpl) AddSchedule(c *gin.Context) {
 	var input web.ScheduleCreateRequest
 
 	email := c.Query("email")
+	if email == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Email is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	findByEmail, _ := self.UserService.FindByEmail(email)
+	if findByEmail.UserId == 0 {
+		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	_ = c.ShouldBindJSON(&input)
 	if input.Title == "" {
-		response := helpers.APIResponseFailed("Bad Request", "Title is empty")
+		response := helpers.APIResponseFailed("Bad Request", "Title is required")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	if input.Day == "" {
-		response := helpers.APIResponseFailed("Bad Request", "Day is empty")
+		response := helpers.APIResponseFailed("Bad Request", "Day is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if input.Day != "monday" && input.Day != "tuesday" && input.Day != "wednesday" && input.Title != "thursday" && input.Day != "friday" {
+		response := helpers.APIResponseFailed("Bad Request", "Invalid day")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
 	input.UserId = findByEmail.UserId
 
-	result, err := self.ScheduleService.Create(input)
-	if err != nil {
-		response := helpers.APIResponse("Bad Request", "Error on create", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	result, _ := self.ScheduleService.Create(input)
 
 	response := helpers.APIResponse("Success", "Success", result)
 
@@ -54,11 +64,32 @@ func (self *ScheduleControllerImpl) Edit(c *gin.Context) {
 	var input web.ScheduleUpdateRequest
 
 	_ = c.ShouldBindJSON(&input)
+	if input.Title == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Title is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	if input.Day == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Day is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	email := c.Query("email")
+	if email == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Email is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 	id, _ := strconv.Atoi(c.Query("id"))
 
 	checkEmail, _ := self.UserService.FindByEmail(email)
+	if checkEmail.UserId == 0 {
+		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	checkSchedule, _ := self.ScheduleService.FindById(id)
 
@@ -74,6 +105,15 @@ func (self *ScheduleControllerImpl) Edit(c *gin.Context) {
 		return
 	}
 
+	if checkSchedule.ScheduleId != id {
+		response := helpers.APIResponseFailed("Forbidden", "Access denied")
+		c.JSON(http.StatusForbidden, response)
+		return
+	}
+
+	input.ScheduleId = checkSchedule.ScheduleId
+	input.UserId = checkEmail.UserId
+
 	updated, _ := self.ScheduleService.Update(input)
 
 	response := helpers.APIResponse("Success", "Success", updated)
@@ -83,74 +123,74 @@ func (self *ScheduleControllerImpl) Edit(c *gin.Context) {
 }
 
 func (self *ScheduleControllerImpl) Delete(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(domain.User)
 
 	email := c.Query("email")
+	if email == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Email is required")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	checkEmail, _ := self.UserService.FindByEmail(email)
+	if checkEmail.UserId == 0 {
+		response := helpers.APIResponseFailed("Not Found", "Email is not found")
+		c.JSON(http.StatusNotFound, response)
+		return
+	}
 	id, _ := strconv.Atoi(c.Query("id"))
-
 	checkSchedule, _ := self.ScheduleService.FindById(id)
 
 	if checkSchedule.ScheduleId == 0 {
-		response := helpers.APIResponse("No schedule on that ID", "Bad Request", nil)
-		c.JSON(http.StatusBadRequest, response)
+		response := helpers.APIResponseFailed("Not Found", "Schedule with ID "+strconv.Itoa(id)+" Not Found")
+		c.JSON(http.StatusNotFound, response)
 		return
 	}
 
-	if currentUser.Email != email {
-		response := helpers.APIResponse("Forbiden", "Denied", nil)
-		c.JSON(http.StatusBadRequest, response)
+	if checkEmail.UserId != checkSchedule.UserId {
+		response := helpers.APIResponseFailed("Forbidden", "Access Denied!")
+		c.JSON(http.StatusForbidden, response)
 		return
 	}
 
-	err := self.ScheduleService.Delete(id)
-	if err != nil {
-		response := helpers.APIResponse("Delete Schedule is failed", "Not Found", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
+	_ = self.ScheduleService.Delete(id)
 
-	response := helpers.APIResponse("Success", "Success", nil)
+	response := helpers.APIResponse("Success", "Success", map[string]interface{}{})
 	c.JSON(http.StatusOK, response)
 
 }
 
-func (self *ScheduleControllerImpl) GetAll(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(domain.User)
-
+func (self *ScheduleControllerImpl) GetData(c *gin.Context) {
 	email := c.Query("email")
-
-	if currentUser.Email != email {
-		response := helpers.APIResponse("Forbiden", "Denied", nil)
+	if email == "" {
+		response := helpers.APIResponseFailed("Bad Request", "Email is required")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	listSchedule := self.ScheduleService.FindAll()
-	response := helpers.APIResponse("Success", "Success", listSchedule)
-	c.JSON(http.StatusOK, response)
-}
-
-func (self *ScheduleControllerImpl) GetById(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(domain.User)
-
-	email := c.Query("email")
+	checkEmail, _ := self.UserService.FindByEmail(email)
+	if checkEmail.UserId == 0 {
+		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	day := c.Query("day")
+	if day == "" {
+		listSchedule, _ := self.ScheduleService.FindByUserId(checkEmail.UserId)
 
-	if currentUser.Email != email {
-		response := helpers.APIResponse("Forbiden", "Denied", nil)
-		c.JSON(http.StatusBadRequest, response)
+		response := helpers.APIResponse("Success", "Success", listSchedule)
+		c.JSON(http.StatusOK, response)
 		return
 	}
 
 	checkDay, _ := self.ScheduleService.FindByDay(day)
-	if checkDay.ScheduleId == 0 {
-		response := helpers.APIResponse("No found schedule on that day", "Error", nil)
+	if day != "monday" && day != "tuesday" && day != "wednesday" && day != "thursday" && day != "friday" {
+		response := helpers.APIResponseFailed("Bad Request", "Day is invalid")
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 	response := helpers.APIResponse("Success", "Success", checkDay)
 	c.JSON(http.StatusOK, response)
+
 }
 
 func NewScheduleController(ScheduleService services.ScheduleService, UserService services.UserService) ScheduleController {

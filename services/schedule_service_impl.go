@@ -60,12 +60,6 @@ func (self *ScheduleServiceImpl) Delete(scheduleId int) error {
 	return nil
 }
 
-func (self *ScheduleServiceImpl) FindAll() []web.ScheduleResponse {
-	listSchedule := self.ScheduleRepository.FindAll()
-
-	return helpers.ToScheduleResponses(listSchedule)
-}
-
 func (self *ScheduleServiceImpl) FindById(scheduleId int) (web.ScheduleResponse, error) {
 	schedule, err := self.ScheduleRepository.FindById(scheduleId)
 	if err != nil {
@@ -77,6 +71,15 @@ func (self *ScheduleServiceImpl) FindById(scheduleId int) (web.ScheduleResponse,
 	}
 
 	return helpers.ToScheduleResponse(schedule), nil
+}
+
+func (self *ScheduleServiceImpl) FindByUserId(userId int) ([]web.ScheduleResponse, error) {
+	schedule, err := self.ScheduleRepository.FindByUserId(userId)
+	if err != nil {
+		return []web.ScheduleResponse{}, err
+	}
+
+	return helpers.ToScheduleResponses(schedule), nil
 }
 
 func (self *ScheduleServiceImpl) FindByDay(day string) (web.ScheduleResponse, error) {

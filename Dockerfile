@@ -6,7 +6,7 @@ ENV API_KEY="x-api-key"
 
 ENV SERVER_HOST="localhost"
 
-ENV SERVER_PORT="8080"
+ENV SERVER_PORT="3030"
 
 ENV MYSQL_PORT=3306
 
@@ -20,11 +20,11 @@ WORKDIR /app
 COPY . .
 
 # Build aplikasi
-RUN go build -o todolist-api
+RUN go build -o schedule-api
 
 # Expose port yang digunakan oleh aplikasi
 EXPOSE 3030
 
 # Command untuk menjalankan aplikasi ketika container dijalankan
-CMD ["./todolist-api"]
+CMD ["./schedule-api"]
 
