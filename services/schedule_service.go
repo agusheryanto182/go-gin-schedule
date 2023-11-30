@@ -7,7 +7,8 @@ import (
 type ScheduleService interface {
 	FindById(scheduleId int) (web.ScheduleResponse, error)
 	FindByUserId(userId int) ([]web.ScheduleResponse, error)
-	FindByDay(day string) (web.ScheduleResponse, error)
+	FindByDay(day string) ([]web.ScheduleResponse, error)
+	FindByDayAndUserId(day string, userId int) ([]web.ScheduleResponse, error)
 	Create(req web.ScheduleCreateRequest) (web.ScheduleResponse, error)
 	Update(req web.ScheduleUpdateRequest) (web.ScheduleResponse, error)
 	Delete(scheduleId int) error

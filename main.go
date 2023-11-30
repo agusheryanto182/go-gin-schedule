@@ -6,6 +6,7 @@ import (
 
 	"github.com/agusheryanto182/go-schedule/app"
 	"github.com/agusheryanto182/go-schedule/controllers"
+	"github.com/agusheryanto182/go-schedule/database"
 	"github.com/agusheryanto182/go-schedule/middlewares"
 	"github.com/agusheryanto182/go-schedule/repositories"
 	"github.com/agusheryanto182/go-schedule/services"
@@ -16,6 +17,7 @@ import (
 func InitServer() *http.Server {
 	conf := app.NewConfig()
 	db := app.NewDB(conf)
+	database.Migrate(db)
 	validate := validator.New()
 
 	UserRepository := repositories.NewUserRepository(db)
@@ -27,7 +29,7 @@ func InitServer() *http.Server {
 	scheduleController := controllers.NewScheduleController(scheduleService, UserService)
 
 	r := app.NewRouter(userController, scheduleController)
-	err := r.Run()
+	err := r.Run(":3030")
 	if err != nil {
 		fmt.Println("Error on the route run")
 	}

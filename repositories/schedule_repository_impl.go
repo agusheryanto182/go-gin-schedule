@@ -37,9 +37,19 @@ func (self *ScheduleRepositoryImpl) FindByUserId(userId int) ([]domain.Schedule,
 	return schedule, nil
 }
 
-func (self *ScheduleRepositoryImpl) FindByDay(day string) (domain.Schedule, error) {
-	var schedule domain.Schedule
+func (self *ScheduleRepositoryImpl) FindByDay(day string) ([]domain.Schedule, error) {
+	var schedule []domain.Schedule
 	err := self.db.Where("day = ?", day).Find(&schedule).Error
+	if err != nil {
+		return schedule, err
+	}
+
+	return schedule, nil
+}
+
+func (self *ScheduleRepositoryImpl) FindByDayAndUserId(day string, userId int) ([]domain.Schedule, error) {
+	var schedule []domain.Schedule
+	err := self.db.Where("day = ? AND user_id = ?", day, userId).Find(&schedule).Error
 	if err != nil {
 		return schedule, err
 	}

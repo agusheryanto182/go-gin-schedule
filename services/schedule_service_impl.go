@@ -43,7 +43,6 @@ func (self *ScheduleServiceImpl) Update(req web.ScheduleUpdateRequest) (web.Sche
 		return web.ScheduleResponse{}, err
 	}
 
-	schedule.Day = req.Day
 	schedule.Title = req.Title
 
 	updated := self.ScheduleRepository.Update(schedule)
@@ -82,17 +81,22 @@ func (self *ScheduleServiceImpl) FindByUserId(userId int) ([]web.ScheduleRespons
 	return helpers.ToScheduleResponses(schedule), nil
 }
 
-func (self *ScheduleServiceImpl) FindByDay(day string) (web.ScheduleResponse, error) {
+func (self *ScheduleServiceImpl) FindByDay(day string) ([]web.ScheduleResponse, error) {
 	schedule, err := self.ScheduleRepository.FindByDay(day)
 	if err != nil {
-		return web.ScheduleResponse{}, err
+		return []web.ScheduleResponse{}, err
 	}
 
-	if schedule.ScheduleId == 0 {
-		return web.ScheduleResponse{}, errors.New("Schedule is not found")
+	return helpers.ToScheduleResponses(schedule), nil
+}
+
+func (self *ScheduleServiceImpl) FindByDayAndUserId(day string, userId int) ([]web.ScheduleResponse, error) {
+	schedule, err := self.ScheduleRepository.FindByDayAndUserId(day, userId)
+	if err != nil {
+		return []web.ScheduleResponse{}, err
 	}
 
-	return helpers.ToScheduleResponse(schedule), nil
+	return helpers.ToScheduleResponses(schedule), nil
 }
 
 func NewScheduleService(ScheduleRepository repositories.ScheduleRepository, Validate *validator.Validate) ScheduleService {

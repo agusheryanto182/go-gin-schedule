@@ -19,6 +19,7 @@ WORKDIR /app
 # Copy file-file yang diperlukan ke dalam container
 COPY . .
 
+
 # Build aplikasi
 RUN go build -o schedule-api
 

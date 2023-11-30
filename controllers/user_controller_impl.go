@@ -22,6 +22,20 @@ func (self *UserControllerImpl) CheckIn(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
+
+	if !helpers.IsValidEmail(input.Email) {
+		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	checkEmail, _ := self.UserService.FindByEmail(input.Email)
+	if checkEmail.UserId != 0 {
+		response := helpers.APIResponse("Success", "Success", checkEmail)
+
+		c.JSON(http.StatusOK, response)
+		return
+	}
 	if err != nil {
 		response := helpers.APIResponseFailed("Bad Request", "Invalid email")
 		c.JSON(http.StatusBadRequest, response)
